@@ -22,10 +22,10 @@ services:
 networks:
   vlan10_net:
     name: vlan10_net
-    driver: ipvlan
+    driver: macvlan
     driver_opts:
       parent: ${VLAN10_PARENT}
-      ipvlan_mode: l2
+      # ipvlan_mode: l2
     ipam:
       config:
         - subnet: ${VLAN10_SUBNET}
