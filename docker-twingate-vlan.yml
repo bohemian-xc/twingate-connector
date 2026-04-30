@@ -4,7 +4,7 @@ services:
   twingate_connector:  # Define a service named "twingate_connector"
     container_name: ${TG_LABEL_HOSTNAME}
     hostname: ${TG_LABEL_HOSTNAME}
-    image: "twingate/connector:1.7"  # Use the "twingate/connector" Docker image with the "latest" tag
+    image: "twingate/connector:1.85.0"  # Use the "twingate/connector" Docker image with the "latest" tag
     restart: always  # Ensure the container restarts automatically if it exits (e.g., after a crash or system reboot)
     networks:
       vlan10_net:
