@@ -19,6 +19,7 @@ services:
       - TWINGATE_LOG_ANALYTICS=v2
       - TWINGATE_LOG_LEVEL=4
 
+networks:
   vlan10_net:
     driver: macvlan
     driver_opts:
