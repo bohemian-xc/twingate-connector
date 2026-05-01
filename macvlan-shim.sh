@@ -4,10 +4,8 @@
 # existing Docker macvlan network. This script DOES NOT create the Docker
 # network; run `docker compose -f docker-twingate-vlan.yml up -d` first.
 #
-# Usage (short): sudo ./macvlan-shim.sh PARENT NAME HOST_IP
-# Usage (legacy): sudo ./macvlan-shim.sh PARENT NAME SUBNET GATEWAY HOST_IP
-# Example (short): sudo ./macvlan-shim.sh eth0.10 vlan10_net 192.168.10.50/24
-# Example (legacy): sudo ./macvlan-shim.sh eth0.10 vlan10_net 192.168.10.0/24 192.168.10.1 192.168.10.50/24
+# Usage : sudo ./macvlan-shim.sh PARENT NAME HOST_IP
+# Example : sudo ./macvlan-shim.sh eth0.10 vlan10_net 192.168.10.50/24
 
 set -euo pipefail
 
@@ -16,19 +14,13 @@ if [ "$#" -eq 3 ]; then
   PARENT="$1"
   NAME="$2"
   HOST_IP="$3"
-elif [ "$#" -eq 5 ]; then
-  PARENT="$1"
-  NAME="$2"
-  SUBNET="$3"
-  GATEWAY="$4"
-  HOST_IP="$5"
 else
-  echo "Usage: $0 PARENT NAME HOST_IP    # or: $0 PARENT NAME SUBNET GATEWAY HOST_IP"
+  echo "Usage: $0 PARENT NAME HOST_IP"
   exit 2
 fi
 
 # Check that the named Docker network exists (expect compose to create it)
-if ! docker network inspect "${NAME}" >/dev/null 2>&1; then
+if ! sudo docker network inspect "${NAME}" >/dev/null 2>&1; then
   echo "Docker network '${NAME}' not found. Run 'docker compose -f docker-twingate-vlan.yml up -d' first to create the network."
   exit 3
 fi
