@@ -21,7 +21,7 @@ services:
 
 networks:
   vlan10_net:
-    name: vlan10_net
+    name: ${VLAN10_NAME}
     driver: macvlan
     driver_opts:
       parent: ${VLAN10_PARENT}
