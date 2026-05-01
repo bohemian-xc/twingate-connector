@@ -20,7 +20,8 @@ else
 fi
 
 # Check that the named Docker network exists (expect compose to create it)
-if ! $(docker network ls | grep "${NAME}") >/dev/null 2>&1; then
+local docker_check=$(docker network ls | grep "${NAME}")
+if ! (-z "${docker_check}") >/dev/null 2>&1; then
   echo "Docker network '${NAME}' not found. Run 'docker compose -f docker-twingate-vlan.yml up -d' first to create the network."
   exit 3
 fi
