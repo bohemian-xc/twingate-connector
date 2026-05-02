@@ -9,7 +9,7 @@ services:
     networks:
       gw_net:
         ipv4_address: ${GW_IPADDRESS}
-      bridge_net: {}
+      br_net: {}
     environment:
       # - SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt
       # - TWINGATE_API_ENDPOINT=/connector.stock
