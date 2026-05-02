@@ -26,6 +26,12 @@ if ! (-z "${docker_check}") >/dev/null 2>&1; then
   exit 3
 fi
 
+# Verify parent interface exists
+if ! ip link show "${PARENT}" >/dev/null 2>&1; then
+  echo "Parent interface '${PARENT}' not found. Ensure the VLAN sub-interface exists (e.g., eth0.10) and is up."
+  exit 4
+fi
+
 # Create host-side macvlan interface so the host can reach macvlan containers
 SHIM_IF="macvlan-shim"
 if ip link show "${SHIM_IF}" >/dev/null 2>&1; then

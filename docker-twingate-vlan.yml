@@ -7,8 +7,8 @@ services:
     image: "twingate/connector:1.85.0"  # Use the "twingate/connector" Docker image with the "latest" tag
     restart: always  # Ensure the container restarts automatically if it exits (e.g., after a crash or system reboot)
     networks:
-      vlan10_net:
-        ipv4_address: ${VLAN10_IPADDRESS}
+      gw_net:
+        ipv4_address: ${GW_IPADDRESS}
     environment:
       # - SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt
       # - TWINGATE_API_ENDPOINT=/connector.stock
@@ -20,13 +20,6 @@ services:
       - TWINGATE_LOG_LEVEL=4
 
 networks:
-  vlan10_net:
-    name: ${VLAN10_NAME}
-    driver: macvlan
-    driver_opts:
-      parent: ${VLAN10_PARENT}
-      # ipvlan_mode: l2
-    ipam:
-      config:
-        - subnet: ${VLAN10_SUBNET}
-          gateway: ${VLAN10_GATEWAY}
+  gw_net:
+    name: ${GW_NAME}
+    external: true
