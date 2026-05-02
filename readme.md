@@ -131,34 +131,30 @@ docker compose -f docker-twingate-vlan.yml logs -f twingate_connector
 
 Notes:
 
-- The Compose file creates `vlan10_net` using `driver: macvlan` and `parent: ${VLAN10_PARENT}`. The parent must exist and be the VLAN interface (e.g., `eth0.10`).
-- After the compose stack brings up the network, run the host shim so the Pi can reach containers on that macvlan network (instructions below).
-- If you want containers to get static addresses, set `VLAN10_IPADDRESS` in the `.env` and ensure it does not collide with other addresses in the subnet.
+- The Compose file references external Docker networks and expects them to already exist. Create the external networks referenced in `.env` before running the compose stack.
+- If you want containers to get static addresses, set `GW_IPADDRESS` in the `.env` and ensure it does not collide with other addresses on the network.
 
-## 3. Set up a macvlan shim
+## 3. External network prerequisites
 
-Purpose: Docker macvlan places containers on the same L2 network as the parent interface, but by default the host cannot talk to containers on a macvlan network. A host-side macvlan shim interface gives the host an address on the macvlan network so you can reach containers directly from the Pi.
+This project assumes the named Docker networks used by `docker-twingate-vlan.yml` are external and pre-created. Use the variables in `.env.example` to define the external network names and any IP you wish to reserve for the connector.
 
-This repository includes `macvlan-shim.sh`. Unlike earlier versions, `macvlan-shim.sh` will not create the Docker network — it checks that the named Docker network already exists and then creates/configures a host shim interface so the host can reach containers.
-
-Usage (after you have brought the Compose stack up so the Docker network exists):
+Before running the compose stack, create or ensure the external networks exist. Example (create a macvlan network named `gw_net_name_here`):
 
 ```bash
-# make executable once
-sudo chmod +x macvlan-shim.sh
-
-# run the shim script
-# It accepts either 3 args: PARENT NAME HOST_IP
-# or the original 5 args for compatibility: PARENT NAME SUBNET GATEWAY HOST_IP
-sudo ./macvlan-shim.sh eth0.10 vlan10_net 192.168.10.50/24
+docker network create -d macvlan \
+	--subnet=192.168.10.0/24 \
+	--gateway=192.168.10.1 \
+	-o parent=eth0.10 \
+	gw_net_name_here
 ```
 
-The script will exit with a helpful message if the Docker network `${NAME}` is not present (run `docker compose -f docker-twingate-vlan.yml up -d` first).
+Then run the compose stack:
 
-Tips:
-- Use `parent` equal to your VLAN sub-interface (e.g., `eth0.10`).
-- Persist the shim via a `systemd` unit if you want it recreated at boot.
-- Ensure firewall rules allow traffic between the host shim and macvlan container addresses.
+```bash
+docker compose -f docker-twingate-vlan.yml up -d
+```
+
+Use `.env.example` as a template for required parameters. The compose file expects external networks named by the values of `GW_NAME` and `BR_NAME`.
 
 ## Troubleshooting
 
