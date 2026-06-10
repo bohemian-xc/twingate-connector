@@ -10,7 +10,9 @@ services:
       gw_net:
         ipv4_address: ${GW_IPADDRESS}
       br_net: {}
-    dns: ${TG_DNS}
+    dns: 
+      - ${TG_DNS01}
+      - ${TG_DNS02}
     environment:
       # - SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt
       # - TWINGATE_API_ENDPOINT=/connector.stock
